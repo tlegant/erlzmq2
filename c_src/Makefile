@@ -1,10 +1,15 @@
-LINUX=$(shell uname | grep Linux | wc -l | xargs echo)
 DEPS=../deps
 
-ifeq ($(LINUX),1)
-ZMQ_FLAGS=--with-pic
-else
+unams=$(shell uname -s)
 ZMQ_FLAGS=
+
+ifeq ($(unams),Linux)
+ZMQ_FLAGS=--with-pic
+endif
+
+ifeq ($(unams),FreeBSD)
+ZMQ_FLAGS=--with-pic
+CXX=g++
 endif
 
 ifndef ZEROMQ_VERSION
@@ -15,7 +20,7 @@ all: $(DEPS)/zeromq3/src/.libs/libzmq.a
 
 clean:
 	if test -e $(DEPS)/zeromq3/Makefile; then \
-		cd $(DEPS)/zeromq3; make clean; \
+		cd $(DEPS)/zeromq3; $(MAKE) clean; \
 	else \
 		true; \
 	fi
@@ -29,4 +34,4 @@ $(DEPS)/zeromq3:
 	@cd $(DEPS) && tar xzvfp zeromq-$(ZEROMQ_VERSION).tar.gz && mv zeromq-$(ZEROMQ_VERSION) zeromq3
 
 $(DEPS)/zeromq3/src/.libs/libzmq.a: $(DEPS)/zeromq3
-	@cd $(DEPS)/zeromq3 && ./configure $(ZMQ_FLAGS) && make
+	@cd $(DEPS)/zeromq3 && ./configure $(ZMQ_FLAGS) && $(MAKE)
