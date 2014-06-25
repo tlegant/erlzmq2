@@ -9,6 +9,7 @@ endif
 
 ifeq ($(unams),FreeBSD)
 ZMQ_FLAGS=--with-pic
+CC=gcc
 CXX=g++
 endif
 
